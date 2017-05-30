@@ -1,23 +1,23 @@
 import math
 
 class Pancake:
-	def __init__(self, index, r, h):
-		self.index = index
-		self.r = r
-		self.h = h
+  def __init__(self, index, r, h):
+    self.index = index
+    self.r = r
+    self.h = h
 
-		self.top_area = r ** 2
-		self.side_area = r * 2 * h
-		self.total_area = self.top_area + self.side_area
-	
-	def __hash__(self):
-		return hash(self.index)
-	
-	def __eq__(self, other):
-		return self.index == other.index
-	
-	def __repr__(self):
-		return '{index:%s, r: %s, h: %s, side: %s, top: %s}' % (self.index, self.r, self.h, self.side_area, self.top_area)
+    self.top_area = r ** 2
+    self.side_area = r * 2 * h
+    self.total_area = self.top_area + self.side_area
+
+  def __hash__(self):
+    return hash(self.index)
+
+  def __eq__(self, other):
+    return self.index == other.index
+
+  def __repr__(self):
+    return '{index:%s, r: %s, h: %s, side: %s, top: %s}' % (self.index, self.r, self.h, self.side_area, self.top_area)
 
 
 # raw_input() reads a string with a line of input, stripping the '\n' (newline) at the end.
@@ -27,27 +27,26 @@ for i in xrange(1, t + 1):
   n, k = [int(s) for s in raw_input().split(" ")]  # read a list of integers, 2 in this case
   pancakes = []
   for j in xrange(1, n + 1):
-  	r, h = [int(s) for s in raw_input().split(" ")]
-  	pancake = Pancake(j, r, h)
-  	pancakes.append(pancake)
+    r, h = [int(s) for s in raw_input().split(" ")]
+    pancakes.append(Pancake(j, r, h))
 
-  sorted_pancakes_by_top_area = sorted(pancakes, key=lambda x: x.top_area, reverse=True)[:k]
-  sorted_pancakes_by_side_area = sorted(pancakes, key=lambda x: x.side_area, reverse=True)[:k]
-
-  sorted_pancakes = []
-  sorted_pancakes = sorted_pancakes + sorted_pancakes_by_top_area
-  sorted_pancakes = sorted_pancakes + sorted_pancakes_by_side_area
-  sorted_pancakes = list(set(sorted_pancakes))
-  sorted_pancakes = sorted(sorted_pancakes, key=lambda x: x.total_area, reverse=True)[:k]
-  sorted_pancakes = sorted(sorted_pancakes, key=lambda x: x.r, reverse=True)
-  # print "Sorted pancakes = {}".format(sorted_pancakes)
-
+  max_area = 0
   area = 0
-  for pancake in sorted_pancakes:
-  	area = area + pancake.side_area
+  sorted_pancakes = sorted(pancakes, key=lambda x: x.side_area, reverse=True)
 
-  area = area + sorted_pancakes[0].top_area
+  sorted_pancakes1 = sorted(sorted_pancakes[:k - 1], key=lambda x: x.r, reverse=True)[:1]
+  for pancake in sorted_pancakes1:
+    area = area + pancake.side_area
+  max_area = area
 
-  print "Case #{}: {:.9f}".format(i, area * math.pi)
+  if len(sorted_pancakes1) > 0:
+    max_area = max(max_area, area + sorted_pancakes1[0].top_area)
+
+  for pancake in sorted(sorted_pancakes[k - 1:]):
+    max_area = max(max_area, area + pancake.total_area)
+    if len(sorted_pancakes1) > 0:
+      max_area = max(max_area, area + sorted_pancakes1[0].top_area + pancake.side_area)
+
+  print "Case #{}: {:.9f}".format(i, max_area * math.pi)
 
   # check out .format's specification for more formatting options
